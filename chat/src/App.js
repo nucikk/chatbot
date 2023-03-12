@@ -1,10 +1,13 @@
-import Chat from "./Page/Chat";
+import FrameChat from "./Page/FrameChat";
+import HostChat from "./Page/HostChat";
+
 
 
 function App() {
   return (
     <>
-      <Chat />
+      <HostChat />
+      <FrameChat />
     </>
   );
 }
