@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import "../Style/chat.css"
-// import NextIcon from "../Image/next-Icon.svg"
 import SendeBtn from "../Image/Send-btn.svg"
 import { MessageStatus } from '../Components/MessageStatus'
 const HostChat = () => {
   const [hostMessage, setHostMessage] = useState("");
-  const [messageSent, setMessageSent] = useState("");
-  const [newMessages, setNewMessages] = useState([]);
+  const [messageSentHost, setMessageSent] = useState("");
+  const [hostMessageHistory, setHostMessageHistory] = useState([]);
+  const [frameMessage, setFrameMessage] = useState("");
+  const [messageSentFrame, setMessageSentFrame] = useState("")
+  const [frameMessageHistory, setFrameMessageHistory] = useState([]);
+
+
 
   const HostName = "host";
   const FrameName = "Frame";
@@ -18,20 +22,47 @@ const HostChat = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const savedMessage = localStorage.getItem("message");
+    if (savedMessage) {
+      setFrameMessage(savedMessage);
+    }
+  }, []);
+
   const handleHostMessageChange = (e) => {
     setMessageSent(e.target.value);
   };
 
-  const handleSendClick = (e) => {
-    e.preventDefault();
-    if (messageSent.trim() !== "") { // შამოწმებს რომ ცარიელი მესიჯი არ გაიგზავნოს
-      setHostMessage(messageSent);
-      setMessageSent("");
-      setNewMessages(prevMessages => [...prevMessages, messageSent])
-      localStorage.setItem("message", messageSent);
-    }
+  const handleFameMessageChange = (e) => {
+    setMessageSentFrame(e.target.value);
   };
 
+  const handleSendClickHost = (e) => {
+    e.preventDefault();
+    if (messageSentHost.trim() !== "") {
+      setHostMessage(messageSentHost);
+      setMessageSent("");
+      if (messageSentFrame.trim() !== "") {
+        setHostMessageHistory(prevMessages => [...prevMessages, messageSentHost]);
+        setFrameMessageHistory(prevMessages => [...prevMessages, messageSentFrame]);
+      } else {
+        setHostMessageHistory(prevMessages => [...prevMessages, messageSentHost]);
+      }
+      localStorage.setItem("message", messageSentHost);
+    }
+  };
+  const handleSendClickFrame = (e) => {
+    e.preventDefault();
+    if (messageSentFrame.trim() !== "") {
+      setFrameMessage(messageSentFrame);
+      setMessageSentFrame("");
+      setFrameMessageHistory(prevMessages => [...prevMessages, messageSentFrame]);
+      if (messageSentHost.trim() !== "") {
+        setHostMessageHistory(prevMessages => [...prevMessages, messageSentHost]);
+      }
+      localStorage.setItem("message", messageSentFrame);
+    }
+  };
   return (
     <>
       <div className="chat_container">
@@ -42,26 +73,28 @@ const HostChat = () => {
 
             <div className="chat">
               <div className='host_msg'>
-                {newMessages.map((message, index) => (
+                {hostMessageHistory.map((message, index) => (
                   <div className="notification_host" key={index}>
                     <p>{message}</p>
                   </div>
                 ))}
               </div>
               <div className='frame_msg'>
-                <div className="notification_frame">
-                  Lorem, ipsum.
-                </div>
+                {frameMessageHistory.map((message, index) => (
+                  <div className="notification_frame" key={index}>
+                    <p>{message}</p>
+                  </div>
+                ))}
                 <div className="input_box">
 
                   <input
                     className="msg_input"
                     type="text"
                     placeholder="Type a message"
-                    value={messageSent}
+                    value={messageSentHost}
                     onChange={handleHostMessageChange}
                   />
-                  <button className="send_btn" type="submit" onClick={handleSendClick}><img src={SendeBtn} alt="send message icon" /></button>
+                  <button className="send_btn" type="submit" onClick={handleSendClickHost}><img src={SendeBtn} alt="send message icon" /></button>
 
                 </div>
               </div>
@@ -75,33 +108,37 @@ const HostChat = () => {
 
             <div className="chat">
               <div className='host_msg'>
-                <div className="notification_frame">
-                  Lorem, ipsum.
-                </div>
 
-
+                {frameMessageHistory.map((message, index) => (
+                  <div className="notification_frame" key={index}>
+                    <p>{message}</p>
+                  </div>
+                ))}
               </div>
+
               <div className='frame_msg'>
-                {newMessages.map((message, index) => (
+                {hostMessageHistory.map((message, index) => (
                   <div className="notification_host" key={index}>
                     <p>{message}</p>
                   </div>
                 ))}
+
+
                 <div className="input_box">
                   <input
                     className="msg_input"
                     type="text"
                     placeholder="Type a message"
-                    value={messageSent}
-                    onChange={handleHostMessageChange}
+                    value={messageSentFrame}
+                    onChange={handleFameMessageChange}
                   />
-                  <button className="send_btn" type="submit" onClick={handleSendClick}><img src={SendeBtn} alt="send message icon" /></button>
+                  <button className="send_btn" type="submit" onClick={handleSendClickFrame}><img src={SendeBtn} alt="send message icon" /></button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </>
   )
