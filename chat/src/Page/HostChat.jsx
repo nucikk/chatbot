@@ -10,8 +10,6 @@ const HostChat = () => {
   const [messageSentFrame, setMessageSentFrame] = useState("")
   const [frameMessageHistory, setFrameMessageHistory] = useState([]);
 
-
-
   const HostName = "host";
   const FrameName = "Frame";
 
@@ -122,7 +120,6 @@ const HostChat = () => {
                     <p>{message}</p>
                   </div>
                 ))}
-
 
                 <div className="input_box">
                   <input
